@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31624.102
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NoSkillDrain", "NoSkillDrain.csproj", "{E04A89BC-D232-454B-84B9-A5A282BF6F6D}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{E04A89BC-D232-454B-84B9-A5A282BF6F6D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E04A89BC-D232-454B-84B9-A5A282BF6F6D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E04A89BC-D232-454B-84B9-A5A282BF6F6D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E04A89BC-D232-454B-84B9-A5A282BF6F6D}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {1508B6F2-6BF9-4FD5-B0CB-2905A9C2638C}
+	EndGlobalSection
+EndGlobal
