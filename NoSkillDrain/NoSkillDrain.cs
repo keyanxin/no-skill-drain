@@ -12,7 +12,7 @@ namespace NoSkillDrain
     public class NoSkillDrainPlugin : BaseUnityPlugin
     {
         public const string Version = "1.0.0";
-        public const string ModName = "NoSkillDrain";
+        public const string ModName = "No Skill Drain";
         public const string ModGUID = "org.bepinex.plugins.noskilldrain";
 
         private static NoSkillDrainPlugin selfReference = null;
