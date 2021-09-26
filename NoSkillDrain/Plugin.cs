@@ -23,6 +23,8 @@ namespace NoSkillDrain
 #else
             Log = new ManualLogSource(null);
 #endif
+            NoSkillDrain.skillDrainMultiplier = Config.Bind<float>("NoSkillDrain", "Skill Drain Multiplier", -100f, "If set to -100 it will not drain skills at all, other settings will apply the % multiplier accordingly.");
+
             _Harmony = Harmony.CreateAndPatchAll(Assembly.GetExecutingAssembly(), null);
         }
 
@@ -73,6 +75,10 @@ namespace NoSkillDrain
                 if (NoSkillDrain.skillDrainMultiplier.Value > -100.0f)
                 {
                     instance.LowerAllSkills(NoSkillDrain.applyModifierValue(factor, NoSkillDrain.skillDrainMultiplier.Value));
+                }
+                else
+                {
+                    Plugin.Log.LogMessage("no skill drain applied on death");
                 }
             }
         }
