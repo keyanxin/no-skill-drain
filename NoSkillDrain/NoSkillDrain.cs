@@ -8,29 +8,28 @@ using System.Reflection;
 
 namespace NoSkillDrain
 {
-    [BepInPlugin("FixItFelix.no.skill.drain", Plugin.ModName, Plugin.Version)]
-    public class Plugin : BaseUnityPlugin
+    [BepInPlugin(NoSkillDrainPlugin.ModGUID, NoSkillDrainPlugin.ModName, NoSkillDrainPlugin.Version)]
+    public class NoSkillDrainPlugin : BaseUnityPlugin
     {
         public const string Version = "1.0.0";
         public const string ModName = "NoSkillDrain";
-        Harmony _Harmony;
-        public static ManualLogSource Log;
+        public const string ModGUID = "org.bepinex.plugins.noskilldrain";
+
+        private static NoSkillDrainPlugin selfReference = null;
+        public static ManualLogSource logger => selfReference.Logger;
 
         private void Awake()
         {
-#if DEBUG
-			Log = Logger;
-#else
-            Log = new ManualLogSource(null);
-#endif
-            NoSkillDrain.skillDrainMultiplier = Config.Bind<float>("NoSkillDrain", "Skill Drain Multiplier", -100f, "If set to -100 it will not drain skills at all, other settings will apply the % multiplier accordingly.");
+            selfReference = this;
+            NoSkillDrain.skillDrainMultiplier = Config.Bind<float>(
+                "NoSkillDrain",
+                "Skill Drain Multiplier",
+                -100f,
+                "If set to -100 it will not drain skills at all, other settings will apply the % multiplier accordingly.");
 
-            _Harmony = Harmony.CreateAndPatchAll(Assembly.GetExecutingAssembly(), null);
-        }
-
-        private void OnDestroy()
-        {
-            if (_Harmony != null) _Harmony.UnpatchSelf();
+            Assembly assembly = Assembly.GetExecutingAssembly();
+            Harmony harmony = new Harmony(ModGUID);
+            harmony.PatchAll(assembly);
         }
     }
 
@@ -51,9 +50,6 @@ namespace NoSkillDrain
             private static MethodInfo method_Skills_LowerAllSkills = AccessTools.Method(typeof(Skills), nameof(Skills.LowerAllSkills));
             private static MethodInfo method_LowerAllSkills = AccessTools.Method(typeof(NoSkillDrainTranspiler), nameof(NoSkillDrainTranspiler.LowerAllSkills));
 
-            /// <summary>
-            /// We replace the call to Skills.LowerAllSkills with our own stub, which then applies the death multiplier.
-            /// </summary>
             [HarmonyTranspiler]
             public static IEnumerable<CodeInstruction> Transpile(IEnumerable<CodeInstruction> instructions)
             {
@@ -78,7 +74,7 @@ namespace NoSkillDrain
                 }
                 else
                 {
-                    Plugin.Log.LogMessage("no skill drain applied on death");
+                    NoSkillDrainPlugin.logger.LogMessage("no skill drain applied on death");
                 }
             }
         }
