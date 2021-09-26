@@ -71,10 +71,11 @@ namespace NoSkillDrain
                 if (NoSkillDrain.skillDrainMultiplier.Value > -100.0f)
                 {
                     instance.LowerAllSkills(NoSkillDrain.applyModifierValue(factor, NoSkillDrain.skillDrainMultiplier.Value));
+                    NoSkillDrainPlugin.logger.LogInfo($"skills reduced by factor {NoSkillDrain.skillDrainMultiplier.Value}");
                 }
                 else
                 {
-                    NoSkillDrainPlugin.logger.LogMessage("no skill drain applied on death");
+                    NoSkillDrainPlugin.logger.LogInfo("no skill drain applied on death");
                 }
             }
         }
