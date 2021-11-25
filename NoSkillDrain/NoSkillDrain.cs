@@ -8,20 +8,20 @@ using System.Reflection;
 
 namespace NoSkillDrain
 {
-    [BepInPlugin(NoSkillDrainPlugin.ModGUID, NoSkillDrainPlugin.ModName, NoSkillDrainPlugin.Version)]
+    [BepInPlugin(NoSkillDrainPlugin.ModGuid, NoSkillDrainPlugin.ModName, NoSkillDrainPlugin.Version)]
     public class NoSkillDrainPlugin : BaseUnityPlugin
     {
         public const string Version = "1.0.1";
         public const string ModName = "No Skill Drain";
-        public const string ModGUID = "org.bepinex.plugins.noskilldrain";
+        private const string ModGuid = "org.bepinex.plugins.noskilldrain";
 
-        private static NoSkillDrainPlugin selfReference = null;
-        public static ManualLogSource logger => selfReference.Logger;
+        private static NoSkillDrainPlugin _selfReference;
+        public static ManualLogSource StaticLogger => _selfReference.Logger;
 
         private void Awake()
         {
-            selfReference = this;
-            NoSkillDrain.skillDrainMultiplier = Config.Bind<float>(
+            _selfReference = this;
+            NoSkillDrain.SkillDrainMultiplier = Config.Bind(
                 "NoSkillDrain",
                 "Skill Drain Multiplier",
                 -100f,
@@ -29,16 +29,16 @@ namespace NoSkillDrain
                 "the % multiplier accordingly.");
 
             Assembly assembly = Assembly.GetExecutingAssembly();
-            Harmony harmony = new Harmony(ModGUID);
+            Harmony harmony = new Harmony(ModGuid);
             harmony.PatchAll(assembly);
         }
     }
 
     public static class NoSkillDrain
     {
-        public static ConfigEntry<float> skillDrainMultiplier;
+        public static ConfigEntry<float> SkillDrainMultiplier;
 
-        public static float applyModifierValue(float targetValue, float value)
+        private static float ApplyModifierValue(float targetValue, float value)
         {
             if (value <= -100)
                 value = -100;
@@ -48,8 +48,11 @@ namespace NoSkillDrain
         [HarmonyPatch(typeof(Skills), nameof(Skills.OnDeath))]
         public static class NoSkillDrainTranspiler
         {
-            private static MethodInfo method_Skills_LowerAllSkills = AccessTools.Method(typeof(Skills), nameof(Skills.LowerAllSkills));
-            private static MethodInfo method_LowerAllSkills = AccessTools.Method(typeof(NoSkillDrainTranspiler), nameof(NoSkillDrainTranspiler.LowerAllSkills));
+            private static readonly MethodInfo MethodSkillsLowerAllSkills =
+                AccessTools.Method(typeof(Skills), nameof(Skills.LowerAllSkills));
+
+            private static readonly MethodInfo MethodLowerAllSkills = 
+                AccessTools.Method(typeof(NoSkillDrainTranspiler), nameof(NoSkillDrainTranspiler.LowerAllSkills));
 
             [HarmonyTranspiler]
             public static IEnumerable<CodeInstruction> Transpile(IEnumerable<CodeInstruction> instructions)
@@ -58,9 +61,9 @@ namespace NoSkillDrain
 
                 for (int i = 0; i < il.Count; ++i)
                 {
-                    if (il[i].Calls(method_Skills_LowerAllSkills))
+                    if (il[i].Calls(MethodSkillsLowerAllSkills))
                     {
-                        il[i].operand = method_LowerAllSkills;
+                        il[i].operand = MethodLowerAllSkills;
                     }
                 }
 
@@ -69,17 +72,18 @@ namespace NoSkillDrain
 
             public static void LowerAllSkills(Skills instance, float factor)
             {
-                if (NoSkillDrain.skillDrainMultiplier.Value > -100.0f)
+                if (NoSkillDrain.SkillDrainMultiplier.Value > -100.0f)
                 {
-                    instance.LowerAllSkills(NoSkillDrain.applyModifierValue(factor, NoSkillDrain.skillDrainMultiplier.Value));
-                    NoSkillDrainPlugin.logger.LogInfo($"skills reduced by factor {NoSkillDrain.skillDrainMultiplier.Value}");
+                    instance.LowerAllSkills(NoSkillDrain.ApplyModifierValue(factor,
+                        NoSkillDrain.SkillDrainMultiplier.Value));
+                    NoSkillDrainPlugin.StaticLogger.LogInfo(
+                        $"skills reduced by factor {NoSkillDrain.SkillDrainMultiplier.Value}");
                 }
                 else
                 {
-                    NoSkillDrainPlugin.logger.LogInfo("no skill drain applied on death");
+                    NoSkillDrainPlugin.StaticLogger.LogInfo("no skill drain applied on death");
                 }
             }
         }
-
     }
 }
