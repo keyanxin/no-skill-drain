@@ -11,7 +11,7 @@ namespace NoSkillDrain
     [BepInPlugin(NoSkillDrainPlugin.ModGUID, NoSkillDrainPlugin.ModName, NoSkillDrainPlugin.Version)]
     public class NoSkillDrainPlugin : BaseUnityPlugin
     {
-        public const string Version = "1.0.0";
+        public const string Version = "1.0.1";
         public const string ModName = "No Skill Drain";
         public const string ModGUID = "org.bepinex.plugins.noskilldrain";
 
@@ -25,7 +25,8 @@ namespace NoSkillDrain
                 "NoSkillDrain",
                 "Skill Drain Multiplier",
                 -100f,
-                "If set to -100 it will not drain skills at all, other settings will apply the % multiplier accordingly.");
+                "If set to -100 it will not drain skills at all, other settings will apply " +
+                "the % multiplier accordingly.");
 
             Assembly assembly = Assembly.GetExecutingAssembly();
             Harmony harmony = new Harmony(ModGUID);
