@@ -11,6 +11,7 @@ Values bigger -100 will act as a multiplier to the skill drain.
 
 ## Changelog 
 
+* 1.1.0 -> updated for Mistlands public-test
 * 1.0.1 -> updated BepInEx only, not really changing functions
 * 1.0.0 -> initial version
 

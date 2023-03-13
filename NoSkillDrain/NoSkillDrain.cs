@@ -8,10 +8,10 @@ using System.Reflection;
 
 namespace NoSkillDrain
 {
-    [BepInPlugin(NoSkillDrainPlugin.ModGuid, NoSkillDrainPlugin.ModName, NoSkillDrainPlugin.Version)]
+    [BepInPlugin(ModGuid, ModName, Version)]
     public class NoSkillDrainPlugin : BaseUnityPlugin
     {
-        public const string Version = "1.0.1";
+        public const string Version = "1.1.0";
         public const string ModName = "No Skill Drain";
         private const string ModGuid = "org.bepinex.plugins.noskilldrain";
 
@@ -59,11 +59,10 @@ namespace NoSkillDrain
             {
                 List<CodeInstruction> il = instructions.ToList();
 
-                for (int i = 0; i < il.Count; ++i)
-                {
-                    if (il[i].Calls(MethodSkillsLowerAllSkills))
+                foreach (var t in il) {
+                    if (t.Calls(MethodSkillsLowerAllSkills))
                     {
-                        il[i].operand = MethodLowerAllSkills;
+                        t.operand = MethodLowerAllSkills;
                     }
                 }
 
@@ -72,12 +71,12 @@ namespace NoSkillDrain
 
             public static void LowerAllSkills(Skills instance, float factor)
             {
-                if (NoSkillDrain.SkillDrainMultiplier.Value > -100.0f)
+                if (SkillDrainMultiplier.Value > -100.0f)
                 {
-                    instance.LowerAllSkills(NoSkillDrain.ApplyModifierValue(factor,
-                        NoSkillDrain.SkillDrainMultiplier.Value));
+                    instance.LowerAllSkills(ApplyModifierValue(factor, 
+                        SkillDrainMultiplier.Value));
                     NoSkillDrainPlugin.StaticLogger.LogInfo(
-                        $"skills reduced by factor {NoSkillDrain.SkillDrainMultiplier.Value}");
+                        $"skills reduced by factor {SkillDrainMultiplier.Value}");
                 }
                 else
                 {
